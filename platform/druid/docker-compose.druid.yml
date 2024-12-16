@@ -1,0 +1,80 @@
+services:
+  druid-coordinator:
+    image: apache/druid:31.0.0
+    container_name: druid-coordinator
+    ports:
+      - "8081:8081"
+    environment:
+      DRUID_NODE_TYPE: coordinator
+      DRUID_HOSTNAME: druid-coordinator
+    command: ./bin/run-druid coordinator
+
+  druid-overlord:
+    image: apache/druid:31.0.0
+    container_name: druid-overlord
+    ports:
+      - "8090:8090"
+    environment:
+      DRUID_NODE_TYPE: overlord
+      DRUID_HOSTNAME: druid-overlord
+    command: ./bin/run-druid overlord
+
+  druid-broker:
+    image: apache/druid:31.0.0
+    container_name: druid-broker
+    ports:
+      - "8082:8082"
+    environment:
+      DRUID_NODE_TYPE: broker
+      DRUID_HOSTNAME: druid-broker
+    command: ./bin/run-druid broker
+
+  druid-historical:
+    image: apache/druid:31.0.0
+    container_name: druid-historical
+    ports:
+      - "8083:8083"
+    environment:
+      DRUID_NODE_TYPE: historical
+      DRUID_HOSTNAME: druid-historical
+    command: ./bin/run-druid historical
+
+  druid-middlemanager:
+    image: apache/druid:31.0.0
+    container_name: druid-middlemanager
+    ports:
+      - "8091:8091"
+    environment:
+      DRUID_NODE_TYPE: middleManager
+      DRUID_HOSTNAME: druid-middlemanager
+    command: ./bin/run-druid middleManager
+
+  druid-router:
+    image: apache/druid:31.0.0
+    container_name: druid-router
+    ports:
+      - "8888:8888"
+    environment:
+      DRUID_NODE_TYPE: router
+      DRUID_HOSTNAME: druid-router
+    command: ./bin/run-druid router
+
+  druid-metadata-store:
+    image: postgres:latest
+    container_name: druid-metadata-store
+    environment:
+      POSTGRES_DB: druid
+      POSTGRES_USER: druid
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+
+  druid-deep-storage:
+    image: minio/minio
+    container_name: druid-deep-storage
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    ports:
+      - "9000:9000"
+    command: server /data
