@@ -1,23 +1,33 @@
 #!/bin/bash
+# install docker & docker compose
+# install python & util & module
 sudo yum update -y
 sudo amazon-linux-extras enable docker
-sudo yum install docker -y
+sudo yum install -y docker python3-pip git cronie # gcc
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker ec2-user
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-sudo yum install -y python3-pip git
-
-curl https://pyenv.run | bash
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
-echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
-source ~/.bash_profile
-
-pip install pipenv
-pipenv --python 3.12.8
-
-cd ~
+# clone src & register ip to dns
 git clone https://github.com/harookie/poc.git $HOME/poc
+${HOME}/poc/bin/duck.sh >/dev/null 2>&1
+
+# install pyenv & pipenv
+#curl https://pyenv.run | bash
+#echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+#echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+#echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
+#source ~/.bash_profile
+#pipenv --python 3.12.8
+
+# registering dns to cron
+FILE_NM=`mktemp --suffix ".cron"`
+crontab -l > $FILE_NM
+echo '*/5 * * * * ${HOME}/poc/bin/duck.sh >/dev/null 2>&1' >> $FILE_NM
+crontab $FILE_NM
+
+# start dcim kafka
+export PLATFORM_HOME="${HOME}/poc/platform"
+docker-compose -f ${PLATFORM_HOME}/kafka-dcim/docker-compose.kafka-dcim.yml up -d

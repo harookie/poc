@@ -1,7 +1,10 @@
 ### ec2 접속
 ```shell
-$ IP="3.34.2.160"
-$ ssh -i ~/aws_ec2_key_pair.pem ec2-user@${IP}
+$ # IP="3.34.2.160"
+$ # 특정 IP 등록 버전
+$ # echo url="https://www.duckdns.org/update?domains=harookie&token=feafa1bf-d598-42f1-b94c-772781ca05d6&ip=${IP}" | curl -k -o ~/duck.log -K -
+$ ssh -o StrictHostKeyChecking=no -i ~/aws_ec2_key_pair.pem ec2-user@harookie.duckdns.org
+ 
 ```
 
 ### ec2 docker & docker compose 설치
