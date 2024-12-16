@@ -11,8 +11,9 @@ sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 
 # clone src & register ip to dns
-git clone https://github.com/harookie/poc.git $HOME/poc
-${HOME}/poc/bin/duck.sh >/dev/null 2>&1
+git clone https://github.com/harookie/poc.git "${HOME}/poc"
+sudo chmod a+x "${HOME}/poc/bin/duck.sh"
+"${HOME}/poc/bin/duck.sh" >/dev/null 2>&1
 
 # install pyenv & pipenv
 #curl https://pyenv.run | bash
@@ -23,11 +24,11 @@ ${HOME}/poc/bin/duck.sh >/dev/null 2>&1
 #pipenv --python 3.12.8
 
 # registering dns to cron
-FILE_NM=`mktemp --suffix ".cron"`
-crontab -l > $FILE_NM
-echo '*/5 * * * * ${HOME}/poc/bin/duck.sh >/dev/null 2>&1' >> $FILE_NM
-crontab $FILE_NM
+FILE_NM=$(mktemp --suffix ".cron")
+crontab -l > "${FILE_NM}"
+echo "*/5 * * * * ${HOME}/poc/bin/duck.sh >/dev/null 2>&1" >> "${FILE_NM}"
+crontab "${FILE_NM}"
 
 # start dcim kafka
 export PLATFORM_HOME="${HOME}/poc/platform"
-docker-compose -f ${PLATFORM_HOME}/kafka-dcim/docker-compose.kafka-dcim.yml up -d
+docker-compose -f "${PLATFORM_HOME}/kafka-dcim/docker-compose.kafka-dcim.yml" up -d
